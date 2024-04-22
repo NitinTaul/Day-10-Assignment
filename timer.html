@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Timer</title>
+    <style>body{
+      width: 30%;
+      margin:auto;
+    }
+      input[type="number"] {
+        border: none;
+        outline: none;
+        text-align: center;
+        width: 80px;
+        height: 100px;
+        font-size: 44px;
+      }
+      input[type="number"]::placeholder {
+        color: #666;
+      }
+      button {
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="number" id="hours" min="00" value="0" /><label for="number">Hr</label>
+    <input type="number" id="minutes" min="00" max="59" value="0" /><label for="number">Min</label>
+    <input type="number" id="seconds" min="00" max="59" value="0" /><label for="number">Sec</label>
+
+    <div style="margin:10px 30px;display: flex; gap: 20px;">
+      <button onclick="startTimer()">Start</button>
+      <button onclick="pauseTimer()">Stop</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+  </body>
+  <script>
+    let timeremaining;
+    let intervalId;
+
+    function startTimer() {
+      let hours = Number(document.getElementById("hours").value);
+      let minutes = Number(document.getElementById("minutes").value);
+      let seconds = Number(document.getElementById("seconds").value);
+
+      if (hours < 0 || hours > 24 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
+        alert("Invalid input values. Please enter valid time values.");
+        return;
+      }
+
+        timeremaining = hours * 3600 + minutes * 60 + seconds;
+
+      intervalId = setInterval(function () {
+        timeremaining--;
+
+        let hours = Math.floor(timeremaining / 3600);
+        let minutes = Math.floor((timeremaining % 3600) / 60);
+        let seconds = Math.floor((timeremaining % 3600) % 60);
+
+        document.getElementById("hours").value = hours;
+        document.getElementById("minutes").value = minutes;
+        document.getElementById("seconds").value = seconds;
+
+        if (timeremaining <= 0) {
+          clearInterval(intervalId);
+          intervalId = null;
+          alert("Time's up!");
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timeremaining = 0;
+      document.getElementById("hours").value = 0;
+      document.getElementById("minutes").value = 0;
+      document.getElementById("seconds").value = 0;
+    }
+  </script>
+</html>
