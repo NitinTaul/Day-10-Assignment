@@ -26,9 +26,10 @@
     let isPaused = false;
 
     function start() {
+        if(!timer){
             timer = setInterval(updateTimer, 1000);
         }
-
+    }
     function pause() {
         clearInterval(timer);
         timer = null;
