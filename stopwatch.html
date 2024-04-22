@@ -25,6 +25,39 @@
     let seconds = 0;
     let isPaused = false;
 
+       
+    function twoD(number) {
+        return (number < 10 ? '0' : '') + number;
+    }
+
+
+    function updateDisplay() {
+        let timeFormat = `${(twoD)(seconds)}s`;
+        if (minutes > 0 || hours > 0) {
+            timeFormat = `${(twoD)(minutes)}m : ${timeFormat}`;
+            if (hours > 0) {
+                timeFormat= `${(twoD)(hours)}h : ${timeFormat}`;
+            }
+        }
+        document.getElementById('timer').innerText = timeFormat;
+    }
+
+
+    function updateTimer() {
+        if (!isPaused) {
+            seconds++;
+            if (seconds === 60) {
+                minutes++;
+                seconds = 0;
+            }
+            if (minutes === 60) {
+                hours++;
+                minutes = 0;
+            }
+            updateDisplay();
+        }
+    }
+
     function start() {
         if(!timer){
             timer = setInterval(updateTimer, 1000);
@@ -44,36 +77,9 @@
         updateDisplay();
     }
 
-    function updateTimer() {
-        if (!isPaused) {
-            seconds++;
-            if (seconds === 60) {
-                minutes++;
-                seconds = 0;
-            }
-            if (minutes === 60) {
-                hours++;
-                minutes = 0;
-            }
-            updateDisplay();
-        }
-    }
-
-    
-    function twoD(number) {
-        return (number < 10 ? '0' : '') + number;
-    }
-
-    function updateDisplay() {
-        let timeFormat = `${(twoD)(seconds)}s`;
-        if (minutes > 0 || hours > 0) {
-            timeFormat = `${(twoD)(minutes)}m : ${timeFormat}`;
-            if (hours > 0) {
-                timeFormat= `${(twoD)(hours)}h : ${timeFormat}`;
-            }
-        }
-        document.getElementById('timer').innerText = timeFormat;
-    }
+   
+ 
+ 
 
 </script>
 
