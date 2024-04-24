@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>slideShow</title>
+    <style>
+      #container {
+        width: 30%;
+        margin: auto;
+        height: 600px;
+      }
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <button onclick="prev()">Prev</button>
+    <button onclick="next()">Next</button>
+    <button class="start-stop" onclick="slideShow()">Start</button>
+  </body>
+  <script>
+    let i = 0;
+    let intervalId;
+
+    let imgArr = [
+      "https://imgs.search.brave.com/nnNoNSEIo_aHGsLO_bi4_2jesIWJmyCwqBKv7zM6GqY/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzZlL2E5/LzE5LzZlYTkxOTMz/OGI0MmMyM2FhNDVl/ZmU3ZWM4YTMxYzJh/LmpwZw",
+      "https://imgs.search.brave.com/YX_KBvk0lK0lcLsVHxSZE8rCsyIAPQeTHhBR-kOegTY/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2U4LzY4/LzNmL2U4NjgzZjQ3/ZDhiY2Q4Yjg2N2I5/ZGY5NGZhZWMzOTU2/LmpwZw",
+      "https://imgs.search.brave.com/U11pKzq9WAj9ZjXrFPATtTAfsc7o-CGBMoX7b6ETTw8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2NiL2Uz/LzMxL2NiZTMzMWZm/MTAxYjEyNzc3OTQw/ZDU0ZjdiYjQ1YWVm/LmpwZw",
+      "https://imgs.search.brave.com/6FKLR-O6-Dh3pnxqWU4rmYERbbMeAtWzzAIMOX3BbNg/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzYwLzk5/LzJhLzYwOTkyYTNl/NmY5MzFkY2FiZWZh/NjNlOGU4MGViYzlj/LmpwZw",
+      "https://imgs.search.brave.com/Mg66cQaYE7id7djc30LB8KlY4wQ6Uqj4KqL1clcCkYY/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pMC53/cC5jb20vcGljanVt/Ym8uY29tL3dwLWNv/bnRlbnQvdXBsb2Fk/cy9iZWF1dGlmdWwt/bmF0dXJlLW1vdW50/YWluLXNjZW5lcnkt/cGF0aC13aXRoLWZs/b3dlcnMtZnJlZS1w/aG90by5qcGVnP3c9/NjAwJnF1YWxpdHk9/ODA",
+      "https://imgs.search.brave.com/snUcYZiOkD6AyIlNOJxOPhfqk-6qqbTJvDq2_MqAxNY/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzNmL2Yz/L2ZkLzNmZjNmZGEy/N2FjYzg2YTE4MGJm/ZTBhMTY0NWYyMDk5/LmpwZw",
+      "https://imgs.search.brave.com/HQ15rhja3-eBTdVpbl75fK3OubM9bIx6y2d_FVNPvzw/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzljL2Iw/LzcwLzljYjA3MGQ2/MmRjNzM4YTBjM2Ex/YTQwOGQ2OGU0YWY1/LmpwZw",
+      "https://imgs.search.brave.com/yKR4THuocA1vAS71OIxkxaH2TAussSdMEpJVsp_8zco/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzhiLzFl/L2ZhLzhiMWVmYTMz/NDkwY2I1Zjk5YjEx/MWI2NDdkZGQ1YWE2/LmpwZw",
+      "https://imgs.search.brave.com/PWydAK-QWnUXz-uGGP23hvMbzCLSrR70b-io45rIlz8/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2I0Lzhm/L2YxL2I0OGZmMThm/NjQ3ZmZlMzhiYjM1/MDI3Y2Y1MGNkNDZm/LmpwZw",
+      "https://imgs.search.brave.com/H9BBdPZh2En8Tzxf7KpQPBUKBXKLhSFuoMjnaajOb8Q/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2UzL2Rm/LzA4L2UzZGYwODI5/ZjJhZTE5MmU0YjMy/NTRkYWIzZTBlMzk2/LmpwZw",
+      "https://imgs.search.brave.com/DZO6kOM_yWATtuz_7s4oBqkI-gOBi9V_jjuYYVpsrf0/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzAzL2E1/L2FjLzAzYTVhY2Rh/ZTcyZDJiZWU5MmUw/OTk5MjE0NmQyMjYx/LmpwZw",
+      "https://imgs.search.brave.com/PAzGevFxy3xj56M8YnLytoDO6xyA-Q_X2BSwUl-4_Bo/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzYzLzY0/LzgxLzYzNjQ4MTJl/ZmYxMzAzYmVlMzE4/YzdhOTE2NjcwNWZi/LmpwZw",
+      "https://imgs.search.brave.com/3HfoD5mo-HbdfREv-pfZithyF-HmfpdWHVeYtS05Ns0/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2ExL2Rk/LzM1L2ExZGQzNTll/YjVmNzY3YjkxZDg1/YmQyZTUwMjlkNGFm/LmpwZw",
+      "https://imgs.search.brave.com/3YuHWrnmg0q5wnykQXI2zKgtLk6eyBWA2NyoA_LkGdk/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1waG90by9s/YW5kc2NhcGUtd2l0/aC1waW5lLWZvcmVz/dHMtbW91bnRhaW5z/XzY2MTIwOS0xODMu/anBnP3NpemU9NjI2/JmV4dD1qcGc",
+      "https://imgs.search.brave.com/hbmdnaefoN4Vh-Scm9h_klkMZx2yp67yKPfaYBjUfqw/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzY3LzFl/LzcwLzY3MWU3MDQ4/Yzg1ODgzZmJjZmIz/YWZmNzAyODJlMDk0/LmpwZw",
+      "https://imgs.search.brave.com/3XIMz-4c0Y64wi6IsQ9YEZeKG8yNKqvF63K0fG3eC3w/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/MTYyODU3OTg3OTgt/OTQ1ZWJhYjY1ODNm/P3E9ODAmdz0xMDAw/JmF1dG89Zm9ybWF0/JmZpdD1jcm9wJml4/bGliPXJiLTQuMC4z/Jml4aWQ9TTN3eE1q/QTNmREI4TUh4elpX/RnlZMmg4TVRsOGZH/NWhkSFZ5WlNVeU1H/bHRZV2RsYzN4bGJu/d3dmSHd3Zkh4OE1B/PT0",
+      "https://imgs.search.brave.com/Q5Z4-8Oz80F04pBk_PLfXcLcMXzGPX28h-Cl2eUk-OM/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMuY3RmYXNzZXRz/Lm5ldC9ocmx0eDEy/cGw4aHEvNmJpNndL/SU01RERNNVUxUHRH/VkZjUC8xYzdmY2U2/ZGUzM2JiNjU3NTU0/OGE2NDZmZjliMDNh/YS9uYXR1cmUtcGhv/dG9ncmFwaHktcGlj/dHVyZXMuanBnP2Zp/dD1maWxsJnc9NjAw/Jmg9MTIwMA",
+      "https://imgs.search.brave.com/AvXxeSOMhIRIBB6SY1Rxk00R_sHgI0TArzUIdFKvdGk/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzL2VmLzk4/L2FhL2VmOThhYWJl/N2UxMWQzODViYWVj/OTg0YjAzMGZiYWRj/LmpwZw",
+      "https://imgs.search.brave.com/NYV7N1RmMi9GJT7g7QKVH0TgVMZ73sNxgncYPq3MHz8/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE2/MTM3MDY5MDM2NDct/NzdlMjU1ZWZmOTk0/P3E9ODAmdz0xMDAw/JmF1dG89Zm9ybWF0/JmZpdD1jcm9wJml4/bGliPXJiLTQuMC4z/Jml4aWQ9TTN3eE1q/QTNmREI4TUh4elpX/RnlZMmg4TVRSOGZH/NWhkSFZ5WlNVeU1H/bHRZV2RsYzN4bGJu/d3dmSHd3Zkh4OE1B/PT0",
+      "https://imgs.search.brave.com/XexzVmJW85ACfdT-sYLmszkJA5tjqZy3O8AtoNA-vIE/rs:fit:500:0:0/g:ce/aHR0cHM6Ly9pbWFn/ZXMudW5zcGxhc2gu/Y29tL3Bob3RvLTE0/MzUyMjQ2NTQ5MjYt/ZWNjOWY3ZmEwMjhj/P3E9ODAmdz0xMDAw/JmF1dG89Zm9ybWF0/JmZpdD1jcm9wJml4/bGliPXJiLTQuMC4z/Jml4aWQ9TTN3eE1q/QTNmREI4TUh4bGVI/QnNiM0psTFdabFpX/UjhPWHg4ZkdWdWZE/QjhmSHg4ZkE9PQ.jpeg",
+      "https://imgs.search.brave.com/Mw8-1JUvp1ECp8g_iuJQwN9Z7qqiUPFfmQHCdvbyneA/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pLnBp/bmltZy5jb20vb3Jp/Z2luYWxzLzBkLzg5/LzNlLzBkODkzZTA4/NTY2MzRjNTI1ZDYw/ODhhZDRkYjMxMDky/LmpwZw",
+    ];
+
+    function displayImage(index) {
+      let cont = document.getElementById("container");
+      cont.innerHTML = "";
+      let img = document.createElement("img");
+      img.src = imgArr[index];
+      cont.appendChild(img);
+    }
+
+    function slideShow() {
+      let startButton = document.querySelector(".start-stop");
+      if (!intervalId) {
+        intervalId = setInterval(() => {
+          displayImage(i);
+          i++;
+          if (i == imgArr.length) {
+            i = 0;
+          }
+        }, 2000);
+        startButton.textContent = "Stop";
+      } else {
+        clearInterval(intervalId);
+        intervalId = null;
+        startButton.textContent = "Start";
+      }
+    }
+
+    function next() {
+      stop();
+      i++;
+      if (i == imgArr.length) {
+        i = 0;
+      }
+      displayImage(i);
+    }
+
+    function prev() {
+      stop();
+      i--;
+      if (i < 0) {
+        i = imgArr.length - 1;
+      }
+      displayImage(i);
+    }
+
+    function stop() {
+      clearInterval(intervalId);
+      intervalId = null;
+      document.querySelector(".start-stop").textContent = "Start";
+    }
+
+    displayImage(i);
+  </script>
+</html>
